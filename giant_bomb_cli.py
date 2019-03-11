@@ -131,6 +131,8 @@ def dump_video_shows(api_key):
         return 1
 
     for video_show in json_obj["results"]:
+	video_show["title"] = video_show["title"].replace(u"\u2018", "'").replace(u"\u2019", "'").replace(u"\xe9", "e")
+	video_show["deck"] = video_show["deck"].replace(u"\u2018", "'").replace(u"\u2019", "'").replace(u"\xe9", "e")
         gb_log(COLOURS["Desc"],
                "\t {0}: {1} - ({2})".format(video_show["id"],
                                             video_show["title"], video_show["deck"]))
