@@ -28,6 +28,7 @@ CONFIG_LOCATION = os.path.expanduser("~/.giant_bomb_cli")
 
 def gb_log(colour, string):
     " Log a string with a specified colour "
+    string = string.encode('utf-8')
     print colour + string + COLOURS["End"]
 
 def file_exists_on_server(url):
@@ -178,7 +179,7 @@ def download_video(url, filename):
 
     gb_log(COLOURS["Title"], "Downloading " + url + " to " + filename)
     try:
-        call(["wget", "--user-agent", "downloading via giant_bomb_cli",
+        call(["wget", "--no-check-certificate", "--user-agent", "downloading via giant_bomb_cli",
               url + "?api_key=" + get_api_key(), "-c", "-O", filename])
     except OSError:
         gb_log(COLOURS["Error"],
@@ -189,7 +190,9 @@ def output_response(response, args, download_archive):
 
     for video in response["results"]:
         name = video["name"]
+        name = name.replace(u"\u2018", "'").replace(u"\u2019", "'")
         desc = video["deck"]
+        desc = desc.replace(u"\u2018", "'").replace(u"\u2019", "'")
         time_in_secs = video["length_seconds"]
         video_id = video["id"]
         url = video[args.quality + "_url"]
@@ -202,16 +205,18 @@ def output_response(response, args, download_archive):
                u"{0} ({1}) [{2}] ID:{3}".format(name, video_show_string,
                                                 convert_seconds_to_string(time_in_secs),
                                                 video_id))
-        gb_log(COLOURS["Desc"], "\t" + desc)
+#        gb_log(COLOURS["Desc"], "\t" + desc)
 
         if args.shouldStream:
             stream_video(url)
         elif args.shouldDownload:
-            # Construct filename
-            filename = name.replace(" ", "_")
-            filename = filename.replace("/", "-")
+          # Construct filename
+            filename = name.replace("/", "-")
             filename = filename.replace(":", "")
-            filename += "." + url.split(".")[-1]
+            if url is not None:
+            	filename += "." + url.split(".")[-1]
+            filename = str(video_id) + " - " + filename
+            filename = filename.replace(u"\u2018", "'").replace(u"\u2019", "'").replace(u"\xe9", "e")
 
             if args.outputFolder != None:
                 if not os.path.exists(args.outputFolder):
