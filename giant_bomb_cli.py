@@ -190,9 +190,9 @@ def output_response(response, args, download_archive):
 
     for video in response["results"]:
         name = video["name"]
-        name = name.replace(u"\u2018", "'").replace(u"\u2019", "'")
+        name = name.replace(u"\u2018", "'").replace(u"\u2019", "'").replace(u"\xe9", "e")
         desc = video["deck"]
-        desc = desc.replace(u"\u2018", "'").replace(u"\u2019", "'")
+        desc = desc.replace(u"\u2018", "'").replace(u"\u2019", "'").replace(u"\xe9", "e")
         time_in_secs = video["length_seconds"]
         video_id = video["id"]
         url = video[args.quality + "_url"]
