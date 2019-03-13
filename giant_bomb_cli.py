@@ -231,7 +231,7 @@ def output_response(response, args, download_archive):
 
             download_video(url, filename)
 
-            if args.downloadArchive:
+            if args.downloadArchive and url is not None:
                 download_archive["Downloaded"].append(video_id)
 
     if len(response["results"]) == 0:
